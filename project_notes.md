@@ -80,6 +80,41 @@ suppliers = pd.read_csv('suppliers.csv')
 suppliers.shape   => (100, 6)  => 100 records
 
 .......................................................................................................
-
 داده‌ها کلید مشترک دارند؟
+
+customers table:
+customer_id (primary key)
+
+orders table:
+order_id (primary key)
+costomer_id (foreign key ref:customers)
+
+order_items table:
+order_items_id (primary key)
+order_id (foreign key ref:orders)
+product_id (foreign key ref:products)
+
+payment table:
+payment_id (primary key)
+order_id (foreign key ref:orders)
+
+products table:
+product_id (primary key)
+supplier_id (foreign key ref:suppliers)
+
+reviews table:
+review_id (primary key)
+product_id (foreign key ref:products)
+costomer_id (foreign key ref:customers)
+
+shipments table:
+shipment_id (primary key)
+
+
+
+
+
+
+
+
 
