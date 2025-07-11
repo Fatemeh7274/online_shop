@@ -61,22 +61,48 @@ import pandas as pd
 'olist_customers_dataset.head()    => (99441, 5)  => 99441 records 
 dtypes: int64(1), object(4)
 memory usage: 3.8+ MB
+olist_customers_dataset.isnull().sum()   این دستور مجموع تعداد # null رو در هر ستون مشخص میکنه 
+customer_id                 0
+customer_unique_id          0
+customer_zip_code_prefix    0
+customer_city               0
+customer_state              0
 
 olist_geolocation_dataset = pd.read_csv('olist_geolocation_dataset.csv')
 olist_geolocation_dataset.shape       => (1000163, 5)   => 1000163 records 
 dtypes: float64(2), int64(1), object(2)
 memory usage: 38.2+ MB
+geolocation_zip_code_prefix    0
+geolocation_lat                0
+geolocation_lng                0
+geolocation_city               0
+geolocation_state              0
 
 olist_orders_dataset =pd.read_csv('olist_orders_dataset.csv')
 olist_orders_dataset.shape  =>  (99441, 8) => 99441 records  
 dtypes: object(8)  
 memory usage: 6.1+ MB
+order_id                            0
+customer_id                         0
+order_status                        0
+order_purchase_timestamp            0
+order_approved_at                 160
+order_delivered_carrier_date     1783
+order_delivered_customer_date    2965
+order_estimated_delivery_date       0
 
 
 olist_order_items_dataset = pd.read_csv('olist_order_items_dataset.csv')
 olist_order_items_dataset.shape      =>  (112650, 7)  => 112650 records
 dtypes: float64(2), int64(1), object(4)
 memory usage: 6.0+ MB
+order_id               0
+order_item_id          0
+product_id             0
+seller_id              0
+shipping_limit_date    0
+price                  0
+freight_value          0
 
 
 
@@ -84,62 +110,87 @@ olist_order_payments_dataset = pd.read_csv('olist_order_payments_dataset.csv')
 olist_order_payments_dataset.shape     =>  (103886, 5)  => 103886 records
 dtypes: float64(1), int64(2), object(2) 
 memory usage: 4.0+ MB
+order_id                0
+payment_sequential      0
+payment_type            0
+payment_installments    0
+payment_value           0
 
 
 olist_order_reviews_dataset = pd.read_csv('olist_order_reviews_dataset.csv')
 olist_order_reviews_dataset.shape     =>  (99224, 7) => 99224 records
 dtypes: int64(1), object(6)
 memory usage: 5.3+ MB
+review_id                      0
+order_id                       0
+review_score                   0
+review_comment_title       87656
+review_comment_message     58247
+review_creation_date           0
+review_answer_timestamp        0
 
-......................................................................................
+ 
 olist_products_dataset = pd.read_csv('olist_products_dataset.csv')
 olist_products_dataset.shape   => (32951, 9)   => 32951 records
 dtypes: float64(7), object(2)
-memory usage: 2.3+ MB
+memory usage: 2.3+ MB         
+product_id                      0
+product_category_name         610
+product_name_lenght           610
+product_description_lenght    610
+product_photos_qty            610
+product_weight_g                2
+product_length_cm               2
+product_height_cm               2
+product_width_cm                2
 
  
 olist_sellers_dataset = pd.read_csv('olist_sellers_dataset.csv')
 olist_sellers_dataset.shape   => (3095, 4)  => 3095 records
 dtypes: int64(1), object(3)
 memory usage: 96.8+ KB
+seller_id                 0
+seller_zip_code_prefix    0
+seller_city               0
+seller_state              0
 
 
 product_category_name_translation = pd.read_csv('product_category_name_translation.csv')
 product_category_name_translation.shape  =>  (71, 2) 71 records
 dtypes: object(2)
 memory usage: 1.2+ KB
+product_category_name            71
+product_category_name_english    71
 
 
 
 داده‌ها کلید مشترک دارند؟
 
-customers table:
+olist_customers_dataset table:
 customer_id (primary key)
 
-orders table:
+olist_orders_dataset table:
 order_id (primary key)
-costomer_id (foreign key ref:customers)
+costomer_id (foreign key ref:olist_customers_dataset)
 
-order_items table:
+olist_order_items_dataset table:
 order_items_id (primary key)
-order_id (foreign key ref:orders)
-product_id (foreign key ref:products)
+order_id (foreign key ref:olist_orders_dataset)
+product_id (foreign key ref:olist_products_dataset)
+seller_id (foreign key ref:olist_sellers_dataset)
 
-payment table:
-payment_id (primary key)
-order_id (foreign key ref:orders)
+olist_order_payments_dataset table:
+order_id (foreign key ref:olist_orders_dataset)
 
-products table:
-product_id (primary key)
-supplier_id (foreign key ref:suppliers)
-
-reviews table:
+olist_order_reviews_dataset table:
 review_id (primary key)
-product_id (foreign key ref:products)
-costomer_id (foreign key ref:customers)
+order_id (foreign key ref:olist_orders_dataset)
 
-shipments table:
-shipment_id (primary key)
+olist_products_dataset table:
+product_id (primary key)
+
+olist_sellers_dataset table:
+seller_id (primary key)
 
 
 
