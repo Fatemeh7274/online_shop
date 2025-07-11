@@ -92,14 +92,25 @@ dtypes: int64(1), object(6)
 memory usage: 5.3+ MB
 
 ......................................................................................
-shipments = pd.read_csv('shipments.csv')
-shipments.shape   => (15000, 7)  => 15000 records
+olist_products_dataset = pd.read_csv('olist_products_dataset.csv')
+olist_products_dataset.shape   => (32951, 9)   => 32951 records
+dtypes: float64(7), object(2)
+memory usage: 2.3+ MB
 
-..............................................................................................
-suppliers = pd.read_csv('suppliers.csv')
-suppliers.shape   => (100, 6)  => 100 records
+ 
+olist_sellers_dataset = pd.read_csv('olist_sellers_dataset.csv')
+olist_sellers_dataset.shape   => (3095, 4)  => 3095 records
+dtypes: int64(1), object(3)
+memory usage: 96.8+ KB
 
-.......................................................................................................
+
+product_category_name_translation = pd.read_csv('product_category_name_translation.csv')
+product_category_name_translation.shape  =>  (71, 2) 71 records
+dtypes: object(2)
+memory usage: 1.2+ KB
+
+
+
 داده‌ها کلید مشترک دارند؟
 
 customers table:
