@@ -192,11 +192,78 @@ product_id (primary key)
 olist_sellers_dataset table:
 seller_id (primary key)
 
+## Issues for Data Cleaning
+##Initial review: df.info(), df.describe()
+ ## مراحل پاک‌ سازی داد (Data Cleaning Workflow) 
+## First, we check the nulls in the tables with : df.isnull().sum()
+
+olist_orders_dataset table has nulls in volumns:
+order_approved_at                 160
+order_delivered_carrier_date     1783
+order_delivered_customer_date    2965
+## the (approved-date) is not much different from the (delivered-carrier) and (delivered_customer):
+df['col1'] = df['col1'].fillna(df['col2'])
+====>
+
+cols = ['order_delivered_carrier_date', 'order_delivered_customer_date']
+for col in cols:
+    olist_orders_dataset[col] = olist_orders_dataset[col].fillna(olist_orders_dataset['order_approved_at'])
+    
+ ## این کد یک روش  کارآمد برای پر کردن مقدارهای گمشده (null) در چند ستون با استفاده از یک ستون مرجع است.
+olist_orders_dataset.isnull().sum() 
+## دوباره جدول رو چک میکنم :
+order_id                           0
+customer_id                        0
+order_status                       0
+order_purchase_timestamp           0
+order_approved_at                160
+order_delivered_carrier_date     146
+order_delivered_customer_date    146
+order_estimated_delivery_date      0
+## هنوز ( null ) داریم اما حالا میتونیم به روش دیگه اون ها رو پر کنیم.
+
+## روش‌های ffill و bfill مقادیر معتبر قبلی یا بعدی را جایگزین null می‌کنند: 
+olist_orders_dataset['order_approved_at'].fillna(method='bfill', inplace=True)
+olist_orders_dataset['order_delivered_carrier_date'].fillna(method='bfill', inplace=True)
+olist_orders_dataset['order_delivered_customer_date'].fillna(method='bfill', inplace=True)
+## دوباره جدول رو چک میکنم :
+olist_orders_dataset.isnull().sum() 
+order_id                         0
+customer_id                      0
+order_status                     0
+order_purchase_timestamp         0
+order_approved_at                0
+order_delivered_carrier_date     0
+order_delivered_customer_date    0
+order_estimated_delivery_date    0
+## دیگه مقدار null نداریم :)
 
 
 
 
 
 
+
+
+
+
+
+ 
+
+## olist_order_reviews_dataset table has nulls in column:
+review_comment_title       87656
+review_comment_message     58247
+
+
+olist_products_dataset  table has nulls in columns:
+product_id                      0
+product_category_name         610
+product_name_lenght           610
+product_description_lenght    610
+product_photos_qty            610
+product_weight_g                2
+product_length_cm               2
+product_height_cm               2
+product_width_cm                2
 
 
