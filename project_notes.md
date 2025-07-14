@@ -201,33 +201,21 @@ olist_orders_dataset table has nulls in volumns:
 order_approved_at                 160
 order_delivered_carrier_date     1783
 order_delivered_customer_date    2965
-## the (approved-date) is not much different from the (delivered-carrier) and (delivered_customer):
-df['col1'] = df['col1'].fillna(df['col2'])
-====>
 
-cols = ['order_delivered_carrier_date', 'order_delivered_customer_date']
-for col in cols:
-    olist_orders_dataset[col] = olist_orders_dataset[col].fillna(olist_orders_dataset['order_approved_at'])
     
- ## این کد یک روش  کارآمد برای پر کردن مقدارهای گمشده (null) در چند ستون با استفاده از یک ستون مرجع است.
-olist_orders_dataset.isnull().sum() 
-## دوباره جدول رو چک میکنم :
-order_id                           0
-customer_id                        0
-order_status                       0
-order_purchase_timestamp           0
-order_approved_at                160
-order_delivered_carrier_date     146
-order_delivered_customer_date    146
-order_estimated_delivery_date      0
-## هنوز ( null ) داریم اما حالا میتونیم به روش دیگه اون ها رو پر کنیم.
+ 
 
-## روش‌های ffill و bfill مقادیر معتبر قبلی یا بعدی را جایگزین null می‌کنند: 
-olist_orders_dataset['order_approved_at'].fillna(method='bfill', inplace=True)
-olist_orders_dataset['order_delivered_carrier_date'].fillna(method='bfill', inplace=True)
-olist_orders_dataset['order_delivered_customer_date'].fillna(method='bfill', inplace=True)
-## دوباره جدول رو چک میکنم :
-olist_orders_dataset.isnull().sum() 
+olist_orders_dataset = dataframes["olist_orders_dataset"]                       ## استخراج دیتافریم سفارش‌ها
+
+olist_orders_dataset['order_purchase_timestamp'] = pd.to_datetime(olist_orders_dataset['order_purchase_timestamp'])
+olist_orders_dataset['order_delivered_customer_date'] = pd.to_datetime(olist_orders_dataset['order_delivered_customer_date'])
+
+## تمام ردیف‌هایی که مقدار date آن‌ها خالی (null) هست رو حذف می‌کنیم.
+olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_approved_at'].notnull()]
+olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_delivered_carrier_date'].notnull()]
+olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_delivered_customer_date'].notnull()]
+
+olist_orders_dataset.isnull().sum()
 order_id                         0
 customer_id                      0
 order_status                     0
@@ -236,11 +224,18 @@ order_approved_at                0
 order_delivered_carrier_date     0
 order_delivered_customer_date    0
 order_estimated_delivery_date    0
-## دیگه مقدار null نداریم :)
 
-
-
-
+Data columns (total 8 columns):
+ #   Column                         Non-Null Count  Dtype         
+---  ------                         --------------  -----         
+ 0   order_id                       99281 non-null  object        
+ 1   customer_id                    99281 non-null  object        
+ 2   order_status                   99281 non-null  object        
+ 3   order_purchase_timestamp       99281 non-null  datetime64[ns]
+ 4   order_approved_at              99281 non-null  object        
+ 5   order_delivered_carrier_date   99281 non-null  object        
+ 6   order_delivered_customer_date  99281 non-null  datetime64[ns]
+ 7   order_estimated_delivery_date  99281 non-null  object  
 
 
 
@@ -254,6 +249,23 @@ order_estimated_delivery_date    0
 review_comment_title       87656
 review_comment_message     58247
 
+ خالی‌ها "null "  ها رو با عبارت "No title" یا "No comment" پر میکنم 
+چون ترجیح میدم رکوردی رو حذف نکنم .
+olist_order_reviews_dataset['review_comment_title'] = olist_order_reviews_dataset['review_comment_title'].fillna('No title')
+
+olist_order_reviews_dataset['review_comment_message'] = olist_order_reviews_dataset['review_comment_message'].fillna('No comment')
+olist_order_reviews_dataset.isnull().sum()
+دیگه مقدار "null " وجود نداره .
+review_id                  0
+order_id                   0
+review_score               0
+review_comment_title       0
+review_comment_message     0
+review_creation_date       0
+review_answer_timestamp    0
+
+
+
 
 olist_products_dataset  table has nulls in columns:
 product_id                      0
@@ -265,5 +277,10 @@ product_weight_g                2
 product_length_cm               2
 product_height_cm               2
 product_width_cm                2
+
+## product_category_name :پر کردن با مقدار "unknown"
+olist_products_dataset['product_category_name'] = olist_products_dataset['product_category_name'].fillna("unknown")
+
+
 
 
