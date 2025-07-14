@@ -210,7 +210,9 @@ olist_orders_dataset = dataframes["olist_orders_dataset"]                       
 olist_orders_dataset['order_purchase_timestamp'] = pd.to_datetime(olist_orders_dataset['order_purchase_timestamp'])
 olist_orders_dataset['order_delivered_customer_date'] = pd.to_datetime(olist_orders_dataset['order_delivered_customer_date'])
 
-## تمام ردیف‌هایی که مقدار date آن‌ها خالی (null) هست رو حذف می‌کنیم.
+## تمام ردیف‌هایی که مقدار date آن‌ها خالی (null) هست رو حذف می‌کنیم. 
+                      ## "dataframes"میسازم که "null "ها رو نداشته باشه 
+
 olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_approved_at'].notnull()]
 olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_delivered_carrier_date'].notnull()]
 olist_orders_dataset = olist_orders_dataset[olist_orders_dataset['order_delivered_customer_date'].notnull()]
@@ -280,6 +282,30 @@ product_width_cm                2
 
 ## product_category_name :پر کردن با مقدار "unknown"
 olist_products_dataset['product_category_name'] = olist_products_dataset['product_category_name'].fillna("unknown")
+یا میتونیم  "null " ها رو حذف کنیم چون تعداد قابل توجهی نیستند.
+
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_name_lenght'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_description_lenght'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_photos_qty'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_weight_g'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_length_cm'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_height_cm'])
+olist_products_dataset = olist_products_dataset.dropna(subset=['product_width_cm'])
+
+olist_products_dataset.isnull().sum()
+product_id                    0
+product_category_name         0
+product_name_lenght           0
+product_description_lenght    0
+product_photos_qty            0
+product_weight_g              0
+product_length_cm             0
+product_height_cm             0
+product_width_cm              0
+
+## برای حذف ردیف‌هایی که مقدار price در آن‌ها کمتر یا مساوی صفر است (price <= 0)، از فیلتر کردن با شرط استفاده می‌کنیم:
+olist_order_items_dataset = olist_order_items_dataset[olist_order_items_dataset['price'] > 0]
+
 
 
 
