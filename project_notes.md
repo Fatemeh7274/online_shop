@@ -202,13 +202,17 @@ order_approved_at                 160
 order_delivered_carrier_date     1783
 order_delivered_customer_date    2965
 
+
     
  
 
-olist_orders_dataset = dataframes["olist_orders_dataset"]                       ## استخراج دیتافریم سفارش‌ها
+## تبدیل رشته به "Datetime"
 
 olist_orders_dataset['order_purchase_timestamp'] = pd.to_datetime(olist_orders_dataset['order_purchase_timestamp'])
+olist_orders_dataset['order_approved_at'] = pd.to_datetime(olist_orders_dataset['order_approved_at'])
+olist_orders_dataset['order_delivered_carrier_date'] = pd.to_datetime(olist_orders_dataset['order_delivered_carrier_date'])
 olist_orders_dataset['order_delivered_customer_date'] = pd.to_datetime(olist_orders_dataset['order_delivered_customer_date'])
+olist_orders_dataset['order_estimated_delivery_date'] = pd.to_datetime(olist_orders_dataset['order_estimated_delivery_date'])
 
 ## تمام ردیف‌هایی که مقدار date آن‌ها خالی (null) هست رو حذف می‌کنیم. 
                       ## "dataframes"میسازم که "null "ها رو نداشته باشه 
@@ -305,6 +309,40 @@ product_width_cm              0
 
 ## برای حذف ردیف‌هایی که مقدار price در آن‌ها کمتر یا مساوی صفر است (price <= 0)، از فیلتر کردن با شرط استفاده می‌کنیم:
 olist_order_items_dataset = olist_order_items_dataset[olist_order_items_dataset['price'] > 0]
+## Cap freight_value at 99th percentile :  مقدار ستون  freight_value رو تا صدک ۹۹ محدود کن
+
+percentile_99 = olist_order_items_dataset['freight_value'].quantile(0.99)
+
+print(percentile_99)    ==>> 84.52  
+ ##  مقدارهای بالاتر از صدک ۹۹ رو با خود صدک ۹۹ جایگزین (cap) :
+
+olist_order_items_dataset['freight_value'] = olist_order_items_dataset['freight_value'].clip(upper=percentile_99)
+
+## ردیف‌هایی از جدول پرداخت‌ها (olist_order_payments_dataset) که تکراری هستن رو حذف کنیم.
+olist_order_payments_dataset.info()
+ 0   order_id              103886 
+ 1   payment_sequential    103886 
+ 2   payment_type          103886 
+ 3   payment_installments  103886 
+ 4   payment_value         103886 
+
+
+
+olist_order_payments_dataset = olist_order_payments_dataset.drop_duplicates(subset=['order_id', 'payment_type', 'payment_value'])
+
+olist_order_payments_dataset.info()
+ 0   order_id              103271 
+ 1   payment_sequential    103271 
+ 2   payment_type          103271 
+ 3   payment_installments  103271 
+ 4   payment_value         103271 
+
+
+
+
+
+
+
 
 
 
