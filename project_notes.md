@@ -326,6 +326,9 @@ olist_order_payments_dataset.info()
  3   payment_installments  103886 
  4   payment_value         103886 
 
+ ## اصلاح ساختار داده‌ها و نرمال‌سازی:
+--تبدیل نام ستون‌ها به snake_case در همه فایل‌ها:
+
 
 
 olist_order_payments_dataset = olist_order_payments_dataset.drop_duplicates(subset=['order_id', 'payment_type', 'payment_value'])
