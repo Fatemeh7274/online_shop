@@ -326,8 +326,7 @@ olist_order_payments_dataset.info()
  3   payment_installments  103886 
  4   payment_value         103886 
 
- ## اصلاح ساختار داده‌ها و نرمال‌سازی:
---تبدیل نام ستون‌ها به snake_case در همه فایل‌ها:
+ 
 
 
 
@@ -339,6 +338,57 @@ olist_order_payments_dataset.info()
  2   payment_type          103271 
  3   payment_installments  103271 
  4   payment_value         103271 
+
+ ## اصلاح ساختار داده‌ها و نرمال‌سازی:
+--تبدیل نام ستون‌ها به snake_case در همه فایل‌ها:
+order_items.columns = order_items.columns.str.lower().str.strip().str.replace(" ", "_")
+
+##  نرمال‌سازی دسته‌بندی‌ها:
+olist_products_dataset['product_category_name'] = olist_products_dataset['product_category_name'].fillna("unknown")
+
+## ذخیره داده‌های پاک‌سازی‌شده یک پوشه جدید: 
+import os
+os.listdir("cleaned_data")
+
+olist_customers_dataset.to_csv('cleaned_data/olist_customers_dataset_cleaned.csv', index=False)
+.
+.
+.
+
+
+olist_customers_dataset table:
+customer_id pk
+
+olist_orders_dataset table:
+order_id pk
+fk:
+costomer_id => olist_customers_dataset
+
+olist_order_items_dataset table:
+order_items_id pk
+fk:
+order_id => olist_orders_dataset
+product_id => olist_products_dataset
+seller_id => olist_sellers_dataset
+
+olist_order_payments_dataset table:
+fk:
+order_id =>olist_orders_dataset
+
+olist_order_reviews_dataset table:
+review_id pk
+fk:
+order_id => olist_orders_dataset
+
+olist_products_dataset table:
+product_id pk
+
+olist_sellers_dataset table:
+seller_id pk
+
+
+
+
 
 
 
