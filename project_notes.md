@@ -385,11 +385,180 @@ product_id pk
 
 olist_sellers_dataset table:
 seller_id pk
+**************************************************************************************************************
+
+
+##  ایجاد جدول در pgAdmin4 (با SQL):
+
+CREATE TABLE olist_customers_dataset_cleaned (
+    customer_id TEXT PRIMARY KEY,
+    customer_unique_id TEXT,
+    customer_zip_code_prefix TEXT,
+    customer_city TEXT,
+    customer_state TEXT
+);
+
+CREATE TABLE olist_geolocation_dataset_cleaned (
+    geolocation_zip_code_prefix TEXT,
+    geolocation_lat NUMERIC,
+    geolocation_lng NUMERIC,
+    geolocation_city TEXT,
+    geolocation_state TEXT
+);
+
+CREATE TABLE olist_orders_dataset_cleaned (
+    order_id TEXT PRIMARY KEY,
+    customer_id TEXT,
+    order_status TEXT,
+    order_purchase_timestamp TIMESTAMP,
+    order_approved_at TIMESTAMP,
+    order_delivered_carrier_date TIMESTAMP,
+    order_delivered_customer_date TIMESTAMP,
+    order_estimated_delivery_date TIMESTAMP
+);
+
+CREATE TABLE olist_order_items_dataset_cleaned (
+    order_id TEXT,
+    order_item_id INTEGER,
+    product_id TEXT,
+    seller_id TEXT,
+    shipping_limit_date TIMESTAMP,
+    price NUMERIC,
+    freight_value NUMERIC
+);
+
+CREATE TABLE olist_order_reviews_dataset_cleaned (
+    review_id TEXT PRIMARY KEY,
+    order_id TEXT,
+    review_score INTEGER,
+    review_comment_title TEXT,
+    review_comment_message TEXT,
+    review_creation_date TIMESTAMP,
+    review_answer_timestamp TIMESTAMP
+);
+
+CREATE TABLE olist_products_dataset_cleaned (
+    product_id TEXT PRIMARY KEY,
+    product_category_name TEXT,
+    product_name_lenght NUMERIC,
+    product_description_lenght NUMERIC,
+    product_photos_qty NUMERIC,
+    product_weight_g NUMERIC,
+    product_length_cm NUMERIC,
+    product_height_cm NUMERIC,
+    product_width_cm NUMERIC
+);
+
+CREATE TABLE olist_sellers_dataset_cleaned (
+    seller_id TEXT PRIMARY KEY,
+    seller_zip_code_prefix TEXT,
+    seller_city TEXT,
+    seller_state TEXT
+);
+
+CREATE TABLE product_category_name_translation_cleaned (
+    product_category_name TEXT,
+    product_category_name_english TEXT
+);
+##  ایجاد کلیدهای خارجی:
+ در جدول سفارش‌ها (olist_orders_dataset_cleaned):
+ALTER TABLE olist_orders_dataset_cleaned
+ADD CONSTRAINT fk_customer
+FOREIGN KEY (customer_id)
+REFERENCES olist_customers_dataset_cleaned(customer_id);
+
+در جدول آیتم‌های سفارش (olist_order_items_dataset_cleaned):
+
+ALTER TABLE olist_order_items_dataset_cleaned
+ADD CONSTRAINT fk_order
+FOREIGN KEY (order_id)
+REFERENCES olist_orders_dataset_cleaned(order_id);
+
+ALTER TABLE olist_order_items_dataset_cleaned
+ADD CONSTRAINT fk_product
+FOREIGN KEY (product_id)
+REFERENCES olist_products_dataset_cleaned(product_id);
+
+ALTER TABLE olist_order_items_dataset_cleaned
+ADD CONSTRAINT fk_seller
+FOREIGN KEY (seller_id)
+REFERENCES olist_sellers_dataset_cleaned(seller_id);
+
+جدول پرداخت‌ها (olist_order_payments_dataset_cleaned):
+
+ALTER TABLE olist_order_payments_dataset_cleaned
+ADD CONSTRAINT fk_payment_order
+FOREIGN KEY (order_id)
+REFERENCES olist_orders_dataset_cleaned(order_id);
+
+🔹 جدول بازخوردها (olist_order_reviews_dataset_cleaned):
+
+ALTER TABLE olist_order_reviews_dataset_cleaned
+ADD CONSTRAINT fk_review_order
+FOREIGN KEY (order_id)
+REFERENCES olist_orders_dataset_cleaned(order_id);
 
 
 
 
 
+
+
+
+
+
+## ساخت جدول مرکزی (Fact Table)::
+
+CREATE TABLE orders_fact (
+    order_id TEXT PRIMARY KEY,
+    customer_id TEXT,
+    product_id TEXT,
+    seller_id TEXT,
+    order_date DATE,
+    price NUMERIC,
+    freight_value NUMERIC,
+    payment_value NUMERIC,
+    review_score INTEGER
+);
+## پر کردن جدول با ترکیب جدول‌های دیگه (JOIN):
+CREATE TABLE orders_fact (
+    order_id TEXT PRIMARY KEY,
+    customer_id TEXT,
+    product_id TEXT,
+    seller_id TEXT,
+    order_date DATE,
+    price NUMERIC,
+    freight_value NUMERIC,
+    payment_value NUMERIC,
+    review_score INTEGER
+);
+
+
+INSERT INTO orders_fact(
+
+order_id,
+customer_id,
+product_id,
+seller_id,
+price,
+freight_value,
+payment_value,
+review_score)
+SELECT
+o.order_id,
+o.customer_id,
+oi.product_id,
+oi.seller_id,
+oi.price,
+oi.freight_value,
+p.payment_value,
+r.review_score
+FROM olist_orders_dataset_cleaned o
+JOIN olist_order_items_dataset_cleaned oi ON o.order_id = oi.order_id
+LEFT JOIN olist_order_reviews_dataset_cleaned r ON o.order_id = r.order_id
+LEFT JOIN olist_order_payment_dataset_cleaned p ON o.order_id = p.order_id
+
+## ستون‌های جدید را به جدول orders_fact اضافه میکنم.
 
 
 
